@@ -1,0 +1,61 @@
+## 案例实现逻辑：
+
+**1.在rviz中展示机器人**
+
+首先first_robot.urdf 编写机器人形状，后使用display_robot.launch.py 来集成到rviz2中使用命令:
+
+```elixir
+source install/setup.bash
+colcon build
+ros2 launch fishbot_description display_robot.launch.py
+```
+
+而后可以打开rviz2添加 RobotModel查看机器人模型；
+
+后面使用xacro优化urdf文件：编写xacro文件 ：caster.urdf.xacro （万象轮）wheel.urdf.xacro（机器人轮骨）camera.urdf.xacro（视觉相机）imu.urdf.xacro（连杆部件）laser.urdf.xacro（雷达） base.urdf.xacro（机器人身体基础）common_inertia.xacro（描述机器人体积 ，惯性，质量，视觉等文件）fishbot.urdf.xacro（宏的总调用）
+
+编写完成以上的xacro文件后，执行命令：
+
+```elixir
+source install/setup.bash
+colcon build
+ros2 launch fishbot_description display_robot.launch.py
+```
+
+就应该可以看到，和上面urdf一样的小车在rviz中展示 。
+
+**2.把机器人集成到Gazebo**
+
+先编写连接gazebo的xacro文件gazebo_control_plugin.xacro 然后编写gazebo集成文件 gazebo_sim.launch.py   ；world目录下的文件，是在gazebo建造好的房子文件保存到此目录下全部
+
+完成后运行命令：
+
+```elixir
+source install/setup.bash
+colcon build
+ros2 launch fishbot_description gazebo_sim.launch.py
+```
+
+运行后自动启动gazebo 小车在room中 终端运行
+
+ros2 run teleop_twist_keyboard teleop_twist_keyboard 可以控制小车方向:
+
+这时终端输入rvzi2  启动后 ,Fixed Frame 修改为odom  添加 Robotmodel  TF和 odomtery看到
+
+机器人同步移动
+
+```elixir
+u左前     i直行前进    o右前
+
+j逆时针转   k停止      l顺时针转
+
+ m左后   ，直行后退   .右后
+
+t和b暂时没有试出来干什么用的，有知道的请告诉我？
+
+q/z:增加减少最大速度设定值
+
+w/x:只增加减少线性速度值
+
+e/c:只增加减少角速度
+```
